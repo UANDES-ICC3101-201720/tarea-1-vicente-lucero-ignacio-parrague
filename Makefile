@@ -1,9 +1,9 @@
 CC=gcc
-CFLAGS=-Wall
+CFLAGS=-Wall -lm -lpthread
 
 all: binsearch datagen
 
-datagen: datagen.c 
+datagen: datagen.c
 	$(CC) -o datagen datagen.c $(CFLAGS)
 
 binsearch: binsearch.c util.o
@@ -14,4 +14,3 @@ util.o:
 
 clean:
 	rm datagen binsearch *.o
- 

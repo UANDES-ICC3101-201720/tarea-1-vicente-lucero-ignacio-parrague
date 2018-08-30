@@ -12,7 +12,7 @@
 #include "util.h"
 
 // TODO: check
-int serial_binsearch(int x,int v[],int n) {
+int serial_binsearch(int x,int v[],int n)
 {
     int low,high,mid;
 
@@ -41,7 +41,7 @@ int parallel_binsearch() {
 int main(int argc, char** argv) {
     /* TODO: move this time measurement to right before the execution of each binsearch algorithms
      * in your experiment code. It now stands here just for demonstrating time measurement. */
-    clock_t cbegin = clock();
+    //clock_t cbegin = clock();
 
     printf("[binsearch] Starting up...\n");
 
@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
 						P = atoi(optarg);
     	}
     }
-    if(E<1 || T<3 || 9<T || P<0 || (10^T -1)< P){
+    if(E<1 || T<3 || 9<T || P<0 || (10^T) -1< P){
     	printf("Program terminated, value(s) out of range");
     	exit(0);
     }
@@ -77,8 +77,36 @@ int main(int argc, char** argv) {
 		printf("E = %d \n", E);
 		printf("P = %d \n", P);
 
+    clock_t cbegin = clock();
+
+
+    int pipefd[2];
+    pid_t datagen_id;
+    char buf;
 
     /* TODO: start datagen here as a child process. */
+    pipe(pipefd);
+    datagen_id = fork();
+
+    if(datagen_id == 0)
+    {
+    	printf("%s%d\n","PID Fork Datagen : ", getpid());
+    	char * datagen= "./datagen";
+    	execlp(datagen, &datagen, NULL);
+
+      while (read(pipefd[0], &buf, 1) > 0) // read while EOF
+             write(1, &buf, 1);
+         write(1, "\n", 1);
+         close(pipefd[0]); // close the read-end of the pipe
+         exit(EXIT_SUCCESS);
+    }
+    else if(datagen_id == -1)
+    {
+      printf("error al crear fork \n");
+    }
+
+
+
 
     /* TODO: implement code for your experiments using data provided by datagen and your
      * serial and parallel versions of binsearch.
