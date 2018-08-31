@@ -89,14 +89,18 @@ int main(int argc, char** argv) {
     pid_t datagen_id;
     char buf;*/ //nose si esto esté bien
 
+
+
     /* TODO: start datagen here as a child process. */
   //  pipe(pipefd);
     pid_t datagen_id = fork();
+    char *datagen_file[]={"./datagen",NULL};
+
 
     if(datagen_id == 0)
     {
     	printf("%s%d\n","PID Fork Datagen : ", getpid());
-    	execlp("./datagen", "./datagen", NULL);
+    	execvp(datagen_file[0],datagen_file);
 /*
       while (read(pipefd[0], &buf, 1) > 0) // read while EOF
              write(1, &buf, 1);
