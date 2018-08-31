@@ -120,9 +120,17 @@ int main(int argc, char** argv) {
      * serial and parallel versions of binsearch.
      * */
 
+
+
+     int delay1, delay2;
+
+     for (delay1 = 1; delay1 <= 2000; delay1++)
+       for (delay2 = 1; delay2 <= 1; delay2++)
+       {}
+
     struct sockaddr_un addr;
     int fd, rc;
-    char buf[size];
+    char buf[100];
     char msg[80];
     sprintf(msg, "%d", T);
 
@@ -153,6 +161,7 @@ int main(int argc, char** argv) {
 	  }
     printf("Enviando info: %d bytes enviados.\n", rc);
 
+    /*
     while((rc=read(STDIN_FILENO, buf, sizeof(buf))) > 0){
     	if(write(fd,buf,rc) != rc) {
     		if(rc > 0) fprintf(stderr, "partial write");
@@ -162,6 +171,7 @@ int main(int argc, char** argv) {
     		}
     	}
     }
+    */
     //close
 
     /* TODO: connect to datagen and ask for the necessary data in each experiment round.
@@ -171,6 +181,11 @@ int main(int argc, char** argv) {
      * experiments
      * */
 
+
+    if ((rc = write(fd, "END", sizeof(buf))) == -1){
+		perror("write error\n");
+		exit(-1);
+    }
     /* Probe time elapsed. */
     clock_t cend = clock();
 
