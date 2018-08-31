@@ -111,8 +111,10 @@ int main(int argc, char** argv) {
                     size_t vwritten = bwritten / sizeof(UINT);
                     numvalues += vwritten;
                     remaining_values -= vwritten;
-                    printf("[datagen] wrote '%lu' bytes to socket. '%d' remaining bytes.\n",
-                           vwritten, remaining_values);
+                    // ESTO FUE COMENTADO PORQUE %lu ESTABA TIRANDO ERRORES EN EL MAKE CON FLAGS
+                    //printf("[datagen] wrote '%lu' bytes to socket. '%d' remaining bytes.\n",
+                    //       vwritten, remaining_values);
+
                 }
 
                 free(pvalues);
