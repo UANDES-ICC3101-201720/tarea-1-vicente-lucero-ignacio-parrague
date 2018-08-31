@@ -16,13 +16,9 @@
 
 
 // TODO: check
-<<<<<<< HEAD
-int serial_binsearch(int x,int v[],int n){
 
-=======
 int serial_binsearch(int x,int v[],int n)
 {
->>>>>>> 5376f934c2ccb916c08b9d4f9517a1ece1b924f1
     int low,high,mid;
 
     low=0;
@@ -67,7 +63,7 @@ int main(int argc, char** argv) {
     int size = 1;
     int c;
 
-    while((c = getopt (argc, argv, "E:T:P:")) != -1)
+    while((c = getopt (argc, argv, "E:T:P:")) != -1){
     	switch (c)
     	{
     		case 'E':
@@ -79,18 +75,15 @@ int main(int argc, char** argv) {
 				case 'P':
 						P = atoi(optarg);
     	}
-<<<<<<< HEAD
+    	
     }
+    
     for(int i=1;i<=T;i++){
     	size = size*10;
     }
     size = size-1;
+    
     if(E<1 || T<3 || 9<T || P<0 || size< P){
-=======
-
-
-    if(E<1 || T<3 || 9<T || P<0 || (10^T) -1< P){
->>>>>>> 5376f934c2ccb916c08b9d4f9517a1ece1b924f1
     	printf("Program terminated, value(s) out of range");
     	exit(0);
     }
@@ -111,20 +104,7 @@ int main(int argc, char** argv) {
 
 
     /* TODO: start datagen here as a child process. */
-<<<<<<< HEAD
-    int dtgnid = fork();
-    
-    if(dtgnid == 0){
-    	name = "./datagen";
-    	
-    }
-    else if (dtgnid < 0){
-    	perror("Error, process to create Datagen as child process failured");
-    	exit(-1);
-    }
-    
-		
-=======
+
   //  pipe(pipefd);
     pid_t datagen_id = fork();
     char *datagen_file[]={"./datagen",NULL};
@@ -146,10 +126,6 @@ int main(int argc, char** argv) {
       printf("error al crear fork \n");
     }
 
-
-
-
->>>>>>> 5376f934c2ccb916c08b9d4f9517a1ece1b924f1
     /* TODO: implement code for your experiments using data provided by datagen and your
      * serial and parallel versions of binsearch.
      * */
