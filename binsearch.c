@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 2
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -7,9 +9,11 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include "types.h"
 #include "const.h"
 #include "util.h"
+
 
 // TODO: check
 int serial_binsearch(int x,int v[],int n)
@@ -56,7 +60,7 @@ int main(int argc, char** argv) {
     int P = 0;
     int c;
 
-    while((c = getopt(argc, argv, "E:T:P:"))!= -1){
+    while((c = getopt (argc, argv, "E:T:P:")) != -1)
     	switch (c)
     	{
     		case 'E':
@@ -68,7 +72,8 @@ int main(int argc, char** argv) {
 				case 'P':
 						P = atoi(optarg);
     	}
-    }
+
+
     if(E<1 || T<3 || 9<T || P<0 || (10^T) -1< P){
     	printf("Program terminated, value(s) out of range");
     	exit(0);
@@ -85,15 +90,13 @@ int main(int argc, char** argv) {
     char buf;*/ //nose si esto esté bien
 
     /* TODO: start datagen here as a child process. */
-    pipe(pipefd);
-    datagen_id = fork();
+  //  pipe(pipefd);
+    pid_t datagen_id = fork();
 
     if(datagen_id == 0)
     {
     	printf("%s%d\n","PID Fork Datagen : ", getpid());
-    	char * datagen= "./datagen";
-    	execlp(datagen, &datagen, NULL);
-
+    	execlp("./datagen", "./datagen", NULL);
 /*
       while (read(pipefd[0], &buf, 1) > 0) // read while EOF
              write(1, &buf, 1);
