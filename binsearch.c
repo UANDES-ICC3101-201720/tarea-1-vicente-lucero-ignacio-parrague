@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
+#include <getopt.h>
 #include <unistd.h>
 #include "types.h"
 #include "const.h"
@@ -139,7 +140,12 @@ int main(int argc, char** argv) {
     	exit(-1);
     }
     
-    else if(connect(fd,(struct sockaddr*)&addr, sizeof(addr))==-1){
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    
+    strncpy(addr.sun_path, DSOCKET_PATH, sizeof(addr));
+   
+    if(connect(fd, (struct sockaddr*)&addr, sizeof(addr))==-1){
     	perror("connect intent failed");
     	exit(-1);
     }
