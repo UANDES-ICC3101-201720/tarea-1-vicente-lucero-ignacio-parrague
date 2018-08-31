@@ -40,7 +40,18 @@ int serial_binsearch(int x,int v[],int n)
 }
 
 // TODO: implement
-int parallel_binsearch() {
+int parallel_binsearch(int arrey[], int size  ) {
+		
+		int max_parallels = sysconf(_SC_NPROCESSERS_ONLN);
+		pthread_t m_tid[max_treadds];
+		int parallels = size / max_parallels;
+		int mult = 1;
+		
+		for(int i=0;i<max_parallels;i++)
+		{
+			
+		}
+		
     return 0;
 }
 
