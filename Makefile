@@ -1,9 +1,6 @@
 CC=gcc
-<<<<<<< HEAD
-CFLAGS=-Wall -lm
-=======
+
 CFLAGS=-Wall -Werror -lm -lpthread -std=c11
->>>>>>> 5376f934c2ccb916c08b9d4f9517a1ece1b924f1
 
 all: binsearch datagen
 
