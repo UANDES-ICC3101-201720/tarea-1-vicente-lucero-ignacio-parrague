@@ -80,9 +80,9 @@ int main(int argc, char** argv) {
     clock_t cbegin = clock();
 
 
-    int pipefd[2];
+  /*  int pipefd[2];
     pid_t datagen_id;
-    char buf;
+    char buf;*/ //nose si esto esté bien
 
     /* TODO: start datagen here as a child process. */
     pipe(pipefd);
@@ -94,11 +94,12 @@ int main(int argc, char** argv) {
     	char * datagen= "./datagen";
     	execlp(datagen, &datagen, NULL);
 
+/*
       while (read(pipefd[0], &buf, 1) > 0) // read while EOF
              write(1, &buf, 1);
          write(1, "\n", 1);
          close(pipefd[0]); // close the read-end of the pipe
-         exit(EXIT_SUCCESS);
+         exit(EXIT_SUCCESS);*/
     }
     else if(datagen_id == -1)
     {
