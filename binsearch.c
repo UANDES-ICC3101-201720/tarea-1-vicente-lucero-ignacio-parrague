@@ -40,19 +40,59 @@ int serial_binsearch(int x,int v[],int n)
 }
 
 // TODO: implement
-int parallel_binsearch(int arrey[], int size  ) {
+
+int parallel_binsearch(int *arrey[], int size, int num, int P  ) {
 		
-		int max_parallels = sysconf(_SC_NPROCESSERS_ONLN);
+		int max_parallels = sysconf(_SC_NPROCESSORS_ONLN);
 		pthread_t m_tid[max_treadds];
 		int parallels = size / max_parallels;
 		int mult = 1;
 		
 		for(int i=0;i<max_parallels;i++)
 		{
-			
+			data *infor = malloc(sizeof(date));
+			infor->arrey = arrey;
+			infor->num = num;
+			infor->P = position;
+			infor->size = (c_parts * mult)-1;
+			if (pthread_create(&m_tid[i], NULL, (void *)binsearch, info))
+			{
+				free(infor);
+			}
+			num = parallels * mult;
+			mult++; 
 		}
 		
     return 0;
+}
+
+void *binsearch(void *data)
+{
+	infor *args = data;
+	int min, max, mid, position;
+	position = args->position;
+	min = args->num;
+	max = args->size-1;
+	
+	char end = 'F';
+	
+	while(min<max && end != 'V')
+	{
+		mid = (min + max) / 2;
+		if (position<mid)
+		{
+			max = mid-1;
+		}
+		else if (position>mid)
+			min = mid+1;
+			
+		else
+		{
+			finish = 'V';
+			pthread_exit(0);
+		}
+	}
+	return 0;
 }
 
 int main(int argc, char** argv) {
@@ -171,19 +211,20 @@ int main(int argc, char** argv) {
 		exit(-1);
 	  }
     printf("Enviando info: %d bytes enviados.\n", rc);
+   
+    long unsigned int readvalues = 0;
+    size_t numvalues = pow(10, T);
+    size_t readbytes = 0;
 
-    /*
-    while((rc=read(STDIN_FILENO, buf, sizeof(buf))) > 0){
-    	if(write(fd,buf,rc) != rc) {
-    		if(rc > 0) fprintf(stderr, "partial write");
-    		else{
-    			perror("write error");
-    			exit(-1);
-    		}
-    	}
+    UINT *nums = malloc(sizeof(UINT) * numvalues);
+    while(readvalues < numvalues) {
+        readbytes = read(fd, nums + readvalues, sizeof(UINT)*size);
+        readvalues += readbytes / 4;
     }
-    */
-    //close
+
+    printf("nums %i \n", *nums);
+    
+    
 
     /* TODO: connect to datagen and ask for the necessary data in each experiment round.
      * Create a Unix domain socket with DSOCKET_PATH (see const.h).
