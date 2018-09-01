@@ -2,7 +2,21 @@ Vicente Lucero
 Ignacio Parrague
 
 Parallel Binsearch:
-El algoritmo consta en una division del arreglo original en arreglos de igual tamaños segun la cantidad de nucleos de procesamientos estan disponibles para el proceso. Luego de eso, se crean la misma cantidad de threads que cantidad de arreglos y a cada uno se le asigna esas divisiones a cada uno de ellos para realizar la busqueda. Para ello es necesario la utilizacion de una funcion extra de busqueda binaria que es utilizada por los threads para cumplir el objetivo. 
+El algoritmo consta en una division del arreglo original en arreglos de igual tamaños segun la cantidad de nucleos de procesamientos estan disponibles para el proceso. Luego de eso, se crean la misma cantidad de threads que cantidad de arreglos y a cada uno se le asigna esas divisiones a cada uno de ellos para realizar la busqueda. Para ello es necesario la utilizacion de una funcion extra de busqueda binaria que es utilizada por los threads para cumplir el objetivo, la cual debe ser declarada antes que el parallel debido a que el idioma utilizado es de lectura lineal, si no encuentra la funcion antes, considerará que no esta definida.
+
+
+void *binsearch(void *data)
+	infor *args = data;
+	while(min<max && end != 'V')
+		mid = (min + max) / 2
+		if (position<mid)
+			max = mid-1
+		else if (position>mid)
+			min = mid+1			
+		else
+			finish = 'V'
+			exit(thread)
+	return 0;
 
 int parallel_binsearch(int *arrey[], int size, int num, int P  ) {		
 		int max_parallels = sysconf(_SC_NPROCESSORS_ONLN);
@@ -20,15 +34,7 @@ int parallel_binsearch(int *arrey[], int size, int num, int P  ) {
 			mult++;
 		}
 
-void *binsearch(void *data)
-	infor *args = data;
-	while(min<max && end != 'V')
-		mid = (min + max) / 2
-		if (position<mid)
-			max = mid-1
-		else if (position>mid)
-			min = mid+1			
-		else
-			finish = 'V'
-			exit(thread)
-	return 0;
+	
+	
+PROBLEMAS ENCONTRADOS Y/O LIMITACIONES:
+

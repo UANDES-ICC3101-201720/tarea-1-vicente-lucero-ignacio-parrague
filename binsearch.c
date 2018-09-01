@@ -14,9 +14,18 @@
 #include "types.h"
 #include "const.h"
 #include "util.h"
+#include <pthread.h>
 
 
 // TODO: check
+typedef struct
+{
+	int *array;
+	int num;
+	int position;
+	int size;
+} data;
+
 
 int serial_binsearch(int x,int v[],int n)
 {
@@ -39,36 +48,9 @@ int serial_binsearch(int x,int v[],int n)
     return -1;
 }
 
-// TODO: implement
-
-int parallel_binsearch(int *arrey[], int size, int num, int P  ) {
-		
-		int max_parallels = sysconf(_SC_NPROCESSORS_ONLN);
-		pthread_t m_tid[max_treadds];
-		int parallels = size / max_parallels;
-		int mult = 1;
-		
-		for(int i=0;i<max_parallels;i++)
-		{
-			data *infor = malloc(sizeof(date));
-			infor->arrey = arrey;
-			infor->num = num;
-			infor->P = position;
-			infor->size = (c_parts * mult)-1;
-			if (pthread_create(&m_tid[i], NULL, (void *)binsearch, info))
-			{
-				free(infor);
-			}
-			num = parallels * mult;
-			mult++; 
-		}
-		
-    return 0;
-}
-
-void *binsearch(void *data)
+void *binsearch(void *info)
 {
-	infor *args = data;
+	data *args = info;
 	int min, max, mid, position;
 	position = args->position;
 	min = args->num;
@@ -88,12 +70,40 @@ void *binsearch(void *data)
 			
 		else
 		{
-			finish = 'V';
+			end = 'V';
 			pthread_exit(0);
 		}
 	}
 	return 0;
 }
+// TODO: implement
+
+int parallel_binsearch(int arrey[], int size, int number, int P  ) {
+		
+		int max_parallels = sysconf(_SC_NPROCESSORS_ONLN);
+		pthread_t m_tid[max_parallels];
+		int parallels = size / max_parallels;
+		int mult = 1;
+		
+		for(int i=0;i<max_parallels;i++)
+		{
+			data *infor = malloc(sizeof(data));
+			infor->array = arrey;
+			infor->num = number;
+			infor->position = P;
+			infor->size = (parallels * mult)-1;
+			if (pthread_create(&m_tid[i], NULL, (void *)binsearch, infor))
+			{
+				free(infor);
+			}
+			number = parallels * mult;
+			mult++; 
+		}
+		
+    return 0;
+}
+
+
 
 int main(int argc, char** argv) {
 
