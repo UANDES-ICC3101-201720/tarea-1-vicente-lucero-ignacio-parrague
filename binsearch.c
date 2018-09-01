@@ -14,18 +14,9 @@
 #include "types.h"
 #include "const.h"
 #include "util.h"
-#include <pthread.h>
 
 
 // TODO: check
-typedef struct
-{
-	int *array;
-	int num;
-	int position;
-	int size;
-} data;
-
 
 int serial_binsearch(int x,int v[],int n)
 {
@@ -48,70 +39,18 @@ int serial_binsearch(int x,int v[],int n)
     return -1;
 }
 
-void *binsearch(void *info)
-{
-	data *args = info;
-	int min, max, mid, position;
-	position = args->position;
-	min = args->num;
-	max = args->size-1;
-	
-	char end = 'F';
-	
-	while(min<max && end != 'V')
-	{
-		mid = (min + max) / 2;
-		if (position<mid)
-		{
-			max = mid-1;
-		}
-		else if (position>mid)
-			min = mid+1;
-			
-		else
-		{
-			end = 'V';
-			pthread_exit(0);
-		}
-	}
-	return 0;
-}
 // TODO: implement
-
-int parallel_binsearch(int arrey[], int size, int number, int P  ) {
-		
-		int max_parallels = sysconf(_SC_NPROCESSORS_ONLN);
-		pthread_t m_tid[max_parallels];
-		int parallels = size / max_parallels;
-		int mult = 1;
-		
-		for(int i=0;i<max_parallels;i++)
-		{
-			data *infor = malloc(sizeof(data));
-			infor->array = arrey;
-			infor->num = number;
-			infor->position = P;
-			infor->size = (parallels * mult)-1;
-			if (pthread_create(&m_tid[i], NULL, (void *)binsearch, infor))
-			{
-				free(infor);
-			}
-			number = parallels * mult;
-			mult++; 
-		}
+int parallel_binsearch() {
 		
     return 0;
 }
 
-
-
 int main(int argc, char** argv) {
-
+		
     /* TODO: move this time measurement to right before the execution of each binsearch algorithms
      * in your experiment code. It now stands here just for demonstrating time measurement. */
     //clock_t cbegin = clock();
 
-    printf("[binsearch] Starting up...\n");
 
     /* Get the number of CPU cores available */
     printf("[binsearch] Number of cores available: '%ld'\n",
@@ -137,14 +76,14 @@ int main(int argc, char** argv) {
 				case 'P':
 						P = atoi(optarg);
     	}
-
+    	
     }
-
+    
     for(int i=1;i<=T;i++){
     	size = size*10;
     }
     size = size-1;
-
+    
     if(E<1 || T<3 || 9<T || P<0 || size< P){
     	printf("Program terminated, value(s) out of range");
     	exit(0);
@@ -154,8 +93,12 @@ int main(int argc, char** argv) {
 		printf("P = %d \n", P);
 		printf("Size = %d\n", size);
 
-
     clock_t cbegin = clock();
+
+
+  /*  int pipefd[2];
+    pid_t datagen_id;
+    char buf;*/ //nose si esto esté bien
 
 
 
@@ -170,7 +113,12 @@ int main(int argc, char** argv) {
     {
     	printf("%s%d\n","PID Fork Datagen : ", getpid());
     	execvp(datagen_file[0],datagen_file);
-
+/*
+      while (read(pipefd[0], &buf, 1) > 0) // read while EOF
+             write(1, &buf, 1);
+         write(1, "\n", 1);
+         close(pipefd[0]); // close the read-end of the pipe
+         exit(EXIT_SUCCESS);*/
     }
     else if(datagen_id == -1)
     {
@@ -180,59 +128,51 @@ int main(int argc, char** argv) {
     /* TODO: implement code for your experiments using data provided by datagen and your
      * serial and parallel versions of binsearch.
      * */
-
-
-
-     int delay1, delay2;
-
-     for (delay1 = 1; delay1 <= 2000; delay1++)
-       for (delay2 = 1; delay2 <= 1; delay2++)
-       {}
-
-    struct sockaddr_un addr;
-    int fd, rc;
-    char buf[100];
-    char msg[80];
-    sprintf(msg, "%d", T);
-
-
-
-    strcpy(buf,"BEGIN S ");
-    strcat(buf, msg);
-
-    printf("cosa: %s\n",buf);
-
-    if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1){
+     
+    struct sockaddr_un addr; 
+    int fd; 
+    
+    if( (fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1){
     	perror("an error ocurred with the socket");
     	exit(-1);
     }
-
+    
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
-
-    strncpy(addr.sun_path, DSOCKET_PATH, sizeof(addr.sun_path));
-
+    
+    strncpy(addr.sun_path, DSOCKET_PATH, sizeof(addr));
+   
     if(connect(fd, (struct sockaddr*)&addr, sizeof(addr))==-1){
     	perror("connect intent failed");
     	exit(-1);
     }
-    if ((rc = write(fd, buf, sizeof(buf))) == -1){
-		perror("write error\n");
-		exit(-1);
-	  }
-    printf("Enviando info: %d bytes enviados.\n", rc);
-   
-    long unsigned int readvalues = 0;
-    size_t numvalues = pow(10, T);
-    size_t readbytes = 0;
-
-    UINT *nums = malloc(sizeof(UINT) * numvalues);
-    while(readvalues < numvalues) {
-        readbytes = read(fd, nums + readvalues, sizeof(UINT)*size);
-        readvalues += readbytes / 4;
+    char order[20] = "BEGIN S";
+    char experiments[10];
+    sprintf(experiments,"%d",E);
+    strcat(order, experiments);
+    
+    if(write(fd, order, sizeof(order))==-1)
+    {
+    	perror("an error ocurred starting datagen\n");
     }
-
-    printf("nums %i \n", *nums);
+    
+    long int ReadedValues = 0;
+    size_t TotalValues = size;
+    size_t ReadedBytes = 0;
+    UINT *readbuf = malloc(sizeof(UINT) * TotalValues);
+    printf("comienza el while \n");
+    while(ReadedValues < TotalValues)
+    {
+    	ReadedBytes = read(fd,readbuf+ReadedValues, sizeof(UINT)*1000);
+    	ReadedValues += ReadedBytes /4;
+    }
+    
+    if (write(fd, DATAGEN_END_CMD, sizeof(DATAGEN_END_CMD)) == -1)
+    {
+    	perror("an error ocurred finishing daragen\n");
+    }
+    
+    printf("[binsearch] Starting up...\n");
     
     
 
@@ -242,12 +182,7 @@ int main(int argc, char** argv) {
      * Read the values generated by datagen from the socket and use them to run your
      * experiments
      * */
-
-
-    if ((rc = write(fd, "END", sizeof(buf))) == -1){
-		perror("write error\n");
-		exit(-1);
-    }
+     
     /* Probe time elapsed. */
     clock_t cend = clock();
 
