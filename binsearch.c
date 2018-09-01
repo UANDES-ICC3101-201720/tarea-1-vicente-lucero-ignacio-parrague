@@ -1,20 +1,21 @@
-#define _POSIX_C_SOURCE 2
-#include <ctype.h>
+#define _POSIX_C_SOURCE 199309L
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
-#include <math.h>
 #include <unistd.h>
+#include <limits.h>
+#include <math.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <sys/un.h>
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
 #include <getopt.h>
-#include <unistd.h>
+#include <pthread.h>
 #include "types.h"
 #include "const.h"
 #include "util.h"
-#include <pthread.h>
+
 
 
 // TODO: check
@@ -155,7 +156,7 @@ int main(int argc, char** argv) {
 		printf("Size = %d\n", size);
 
 
-    clock_t cbegin = clock();
+    
 
 
 
@@ -226,7 +227,7 @@ int main(int argc, char** argv) {
     size_t numvalues = pow(10, T);
     size_t readbytes = 0;
 
-    UINT *nums = malloc(sizeof(UINT) * numvalues);
+    int *nums = malloc(sizeof(UINT) * numvalues);
     while(readvalues < numvalues) {
         readbytes = read(fd, nums + readvalues, sizeof(UINT)*size);
         readvalues += readbytes / 4;
@@ -248,13 +249,25 @@ int main(int argc, char** argv) {
 		perror("write error\n");
 		exit(-1);
     }
-    /* Probe time elapsed. */
-    clock_t cend = clock();
+    
+    struct timespec start, finish;
+    double elapsed = 0;
+    double parallel_e = 0;
+    for (int i = 0; i < size; i++)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        serial_binsearch(P, nums, 0);
+        clock_gettime(CLOCK_MONOTONIC, &finish);
+        elapsed = (finish.tv_sec - start.tv_sec);
+        elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        parallel_binsearch(nums, 0, numvalues, P);
+        clock_gettime(CLOCK_MONOTONIC, &finish);
+        parallel_e = (finish.tv_sec - start.tv_sec);
+        parallel_e += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+        printf("%i, %d, %lf, %lf\n", i, E, elapsed, parallel_e); // E, T, SERIAL_TIME, PARALEL_TIME
+    }
 
-    // Time elapsed in miliseconds.
-    double time_elapsed = ((double) (cend - cbegin) / CLOCKS_PER_SEC) * 1000;
-
-    printf("Time elapsed '%lf' [ms].\n", time_elapsed);
-
+    free(nums);
     exit(0);
 }
