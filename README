@@ -37,4 +37,4 @@ int parallel_binsearch(int *arrey[], int size, int num, int P  ) {
 	
 	
 PROBLEMAS ENCONTRADOS Y/O LIMITACIONES:
-   En general se nos presenta un problema en la ejecucion del programa en donde el programa se congela en mitad 	de los procesos, la causa aparente podria ser la misma maquina virtual por su limitada capacidad, ya que esto ocurre con numeros demaciado grandes dentro de las limitaciones. 
+   En general se nos presenta un problema en la ejecucion del programa en donde el programa se congela en mitad de los procesos, la causa aparente podria ser la misma maquina virtual por su limitada capacidad, ya que esto ocurre con numeros demaciado grandes dentro de las limitaciones. 
